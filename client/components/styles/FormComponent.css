@@ -50,3 +50,7 @@ table {
     width: 100%;
     box-sizing: border-box;
   }
+
+  #table-to-xls {
+    display: none;
+  }
