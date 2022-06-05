@@ -1,34 +1,40 @@
-import React, { useState } from 'react'
+import React, { useState, Component } from 'react'
 import { convertToHtml } from "mammoth/mammoth.browser";
+import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 
 import Head from './head'
 import './styles/FormComponent.css'
 
+class TableToExcel extends Component {
+  render() {
+    return (
+      <div>
+        <ReactHTMLTableToExcel
+          id="test-table-xls-button"
+          className="download-table-xls-button"
+          table="table-to-xls"
+          filename="tablexls"
+          sheet="tablexls"
+          buttonText="Download as XLS" />
+        <table id="table-to-xls" dangerouslySetInnerHTML={{ __html: this.props.table }} />
+      </div>
+    );
+  }
+}
+
 const FormComponent = () => {
   const [fileData, setFileData] = useState();
 
-  const regExp = /<p>([^<]*)<\/p>/gm
-
-  const options = {
-    styleMap: [
-      "p[style-name='Section Title'] => input:fresh",
-      "p[style-name='Subsection Title'] => input:fresh"
-    ]
-  };
-
   function loadFile(event) {
     const file = event.target.files[0]
-    convertToHtml({ arrayBuffer: file }, options)
+    convertToHtml({ arrayBuffer: file })
       .then((result) => {
         const html = result.value
-        const newStr = html.replaceAll(regExp, '<input type="text" value="$1" />')
-        console.log(html)
-        setFileData(newStr)
+        setFileData(html)
       })
       .done();
   }
 
-  // console.log(fileData)
 
   return (
     <>
@@ -48,7 +54,7 @@ const FormComponent = () => {
         {fileData && (
           <>
             <div id="file-data" dangerouslySetInnerHTML={{ __html: fileData }} />
-            <input type="text" />
+            <TableToExcel table={fileData} />
           </>
         )}
       </div >
